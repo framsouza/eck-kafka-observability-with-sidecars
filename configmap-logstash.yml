@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash
+data:
+  logstash.yml: |-
+    http.host: "0.0.0.0"
+  pipelines.yml: |-
+    - pipeline.id: pipeline00
+      path.config: "/usr/share/logstash/pipeline/pipeline-00.config"
+  pipeline-00.config: |-
+    input {
+        kafka {
+            bootstrap_servers => "kafka.kafka:9092"
+            topics_pattern => "webtraffic3"
+            consumer_threads => 1
+        }
+    }
+
+    output {
+      elasticsearch {
+        index => "webtraffic-insert-by-kafka"
+        hosts => [ "${ES_HOSTS}" ]
+        user => "${ES_USER}"
+        password => "${ES_PASSWORD}"
+        cacert => '/etc/logstash/certificates/ca.crt'
+      }
+    }

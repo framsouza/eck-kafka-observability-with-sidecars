@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-metricbeat
+  labels:
+    k8s-app: metricbeat
+data:
+  metricbeat.yml: |-
+    reload.enabled: true
+    metricbeat.modules:
+    - module: elasticsearch
+      metricsets:
+        - ccr
+        - cluster_stats
+        - enrich
+        - index
+        - index_recovery
+        - index_summary
+        - ml_job
+        - node_stats
+        - shard
+      period: 60s
+      xpack.enabled: true
+      hosts: ["https://localhost:9200"]
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
+      ssl.verification_mode: "certificate"
+      #ssl.verification_mode: "none"
+      ssl.certificate_authorities: ["/mnt/elastic/tls.crt"]
+
+
+    setup.kibana:
+      host: 'https://${MONITOR_HOST}:${MONITOR_PORT}'
+      username: ${MONITOR_USERNAME}
+      password: ${MONITOR_PASSWORD}
+
+    processors:
+      - add_cloud_metadata: {}
+    
+    cloud.id: "monitoring-cluster:ZWFzdHVzMi5henVyZS5lbGFzdGljLWNsb3VkLmNvbTo5MjQzJGJjNzA5MWQ2YjYwZTQyYTQ5YjJlNGQ5NmMzODdkMjM3JGYwNzY4NjE3YmE0NDQ1MDJhYmU0M2I4ZjZiOWZlZWQ5"
+    cloud.auth: "elastic:bUH3KQaOPX6zDzyFcfYHQ5bP"
