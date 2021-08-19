@@ -1,4 +1,6 @@
-### eck-kafka-observability-with-sidecars
+# eck-kafka-observability-with-sidecars
+
+(WIP)
 
 On this repo, you are going to find the following resources:
 
